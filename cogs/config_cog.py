@@ -15,15 +15,15 @@ class ConfigCog(commands.Cog):
         def __init__(self, config_dict):
             self.__dict__ = config_dict
 
-    def __init__(self, bot, idx, model_uid, model_key, s3):
+    def __init__(self, bot, idx, model_uid, model_key, file_handler):
         self.bot = bot
         self.idx = idx
         self.model_uid = model_uid
         self.model_key = model_key
-        self.s3 = s3
+        self.file_handler = file_handler
 
         # Download the model file
-        s3.get_file(f'{model_uid}-markov-model-encrypted.json.gz')
+        file_handler.get_file(f'{model_uid}-markov-model-encrypted.json.gz')
 
         # Read in the model file
         with open(f'./tmp/{model_uid}-markov-model-encrypted.json.gz', mode='rb') as f:
@@ -38,7 +38,7 @@ class ConfigCog(commands.Cog):
             self.model = markovify.Text.from_json(model_raw_json)
 
         # Set the config parameters
-        config_json = s3.get_json(f'{self.model_uid}-config.json')
+        config_json = file_handler.get_json(f'{self.model_uid}-config.json')
         self.configuration = ConfigCog.BotConfig(config_json)
         self.config_parameters = []
         for k in self.configuration.__dict__.keys():
@@ -48,9 +48,9 @@ class ConfigCog(commands.Cog):
         # Set the command prefix
         self.bot.command_prefix = self.configuration.bot_prefix
 
-    def update_s3(self):
-        """Saves the current bot configuration to S3. Returns false if there was an issue."""
-        return self.s3.update_json(f'{self.model_uid}-config.json', self.configuration.__dict__)
+    def update_json(self):
+        """Saves the current bot configuration to json file. Returns false if there was an issue."""
+        return self.file_handler.update_json(f'{self.model_uid}-config.json', self.configuration.__dict__)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -137,8 +137,8 @@ class ConfigCog(commands.Cog):
         if parameter == 'bot_prefix':
             self.bot.command_prefix = new_value
 
-        # Update the config file in S3
-        if self.update_s3():
+        # Update the config file
+        if self.update_json():
             await ctx.send(f'`{parameter}` changed from {old_value} to {new_value}')
         else:
             await ctx.send('There was a problem updating config...')
@@ -158,7 +158,7 @@ class ConfigCog(commands.Cog):
 
         if value not in self.configuration.white_list_server_ids:
             self.configuration.white_list_server_ids.append(value)
-            if self.update_s3():
+            if self.update_json():
                 await ctx.send(f'Added {value} to server white list')
             else:
                 await ctx.send('There was a problem updating config...')
@@ -180,7 +180,7 @@ class ConfigCog(commands.Cog):
 
         if value in self.configuration.white_list_server_ids:
             self.configuration.white_list_server_ids.remove(value)
-            if self.update_s3():
+            if self.update_json():
                 await ctx.send(f'Removed {value} from server white list')
             else:
                 await ctx.send('There was a problem updating config...')
