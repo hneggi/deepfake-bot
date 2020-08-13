@@ -8,8 +8,6 @@ load_dotenv()
 database_url = os.environ['DEEPFAKE_DATABASE_STRING']
 bot_token = os.environ['DEEPFAKE_DISCORD_TOKEN']
 
-print(database_url)
-
 # AWS Resource Names
 aws_s3_bucket_prefix = 'deepfake-discord-bot'
 lambda_markov_name = 'deepfake-bot-markovify'

@@ -380,7 +380,13 @@ def make_tables():
     """Creates the tables in our database schema"""
     engine = create_engine(database_url)
     conn = engine.connect()
-    Base.metadata.create_all(conn, checkfirst=False)
+
+    #Base.metadata.create_all(conn, checkfirst=False)
+
+    HostedDeployment.__table__.drop(engine)
+    HostedDeployment.__table__.create(engine)
+    HostedBotSettings.__table__.create(engine)
+
     session = Session(engine)
     check_connection(session)
 

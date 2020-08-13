@@ -33,7 +33,7 @@ class DataSet(Base):
     subject_id = Column(BigInteger, ForeignKey('subjects.id'))
     subject_foreign_key = relationship('Subject', foreign_keys=[subject_id])
 
-    # data_uid is the file name stored in an S3 container. Expires after 24 hours.
+    # data_uid is the file name stored in an S3 container. Expires after 30 days.
     time_collected = Column(DateTime)
     data_uid = Column(String(32, collation='utf8_general_ci'), unique=True)
 
@@ -64,7 +64,7 @@ class MarkovModel(Base):
     data_set_id = Column(BigInteger, ForeignKey('data_sets.id'))
     data_set_foreign_key = relationship('DataSet', foreign_keys=[data_set_id])
 
-    # Works similar to data sets. Stored in S3 with 24 hour expiration
+    # Works similar to data sets. Stored in S3 with 30 day expiration
     time_collected = Column(DateTime)
     model_uid = Column(String(32), unique=True)
 
@@ -87,28 +87,40 @@ class Deployment(Base):
     hosted = Column(Boolean)
 
 
-#TODO: finalize these settings
 class HostedDeployment(Base):
-    """A trained bot running on an EC2 instance"""
+    """A trained bot running on an ECS container"""
     __tablename__ = 'hosted_deployments'
     id = Column(BigInteger, primary_key=True)
     deployment_id = Column(BigInteger, ForeignKey('deployments.id'))
     deployment_foreign_key = relationship('Deployment', foreign_keys=[deployment_id])
 
-    # Public IP of the instance running our deployment. Use '0.0.0.0' to indicate no instance is running this bot.
-    ip_address = Column(String(255, collation='utf8_general_ci'))
+    # Discord Credentials
+    bot_token = Column(String(255, collation='utf8_general_ci'))
 
-    # Use this to enable/disable a hosted deployment
-    active = Column(Boolean)
+    # Container management
+    status = Column(String(255, collation='utf8_general_ci'))
+    heartbeat = Column(DateTime)
+    expiration = Column(DateTime)
 
-    # Settings for the deployed bot
+
+class HostedBotSettings(Base):
+    """Users can configure their bots with these"""
+    __tablename__ = 'hosted_bot_settings'
+    id = Column(BigInteger, primary_key=True)
+    hosted_deployment_id = Column(BigInteger, ForeignKey('hosted_deployments.id'))
+    hosted_deployment_foreign_key = relationship('HostedDeployment', foreign_keys=[hosted_deployment_id])
+
     reply_probability = Column(Float)
     new_conversation_min_wait = Column(Integer)
     new_conversation_max_wait = Column(Integer)
     max_sentence_length = Column(Integer)
-
-    # Removes '@'s from messages so users don't constantly get pinged with mentions
+    max_markov_chains = Column(Integer)
+    selection_algorithm = Column(String(255, collation='utf8_general_ci'))
     quiet_mode = Column(Boolean)
-
-    # Discord credentials
-    bot_token = Column(String(255, collation='utf8_general_ci'))
+    avg_delay = Column(Float)
+    std_dev_delay = Column(Float)
+    min_delay = Column(Float)
+    avg_typing_speed = Column(Float)
+    std_dev_typing_speed = Column(Float)
+    min_typing_speed = Column(Float)
+    bot_prefix = Column(String(255, collation='utf8_general_ci'))
