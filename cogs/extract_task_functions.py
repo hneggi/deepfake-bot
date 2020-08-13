@@ -62,8 +62,5 @@ def find_common_prefixes(filters):
 
 
 def upload_to_s3(file_name):
-    s3 = boto3.resource('s3',
-                        aws_access_key_id=aws_access_key_id,
-                        aws_secret_access_key=aws_secret_access_key)
-
+    s3 = boto3.resource('s3')
     s3.Object(aws_s3_bucket_prefix, f'{file_name}'.strip('./tmp/')).upload_file(f'{file_name}')

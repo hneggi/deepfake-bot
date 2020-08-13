@@ -8,6 +8,7 @@ from cogs.filter_commands import FilterCommands
 from cogs.plot_commands import PlotCommands
 from cogs.model_commands import ModelCommands
 from cogs.deploy_commands import DeployCommands
+import cogs.config
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class DeepFakeBot(commands.Bot):
 
 
 def run_app():
-    app = DeepFakeBot(command_prefix='df!')
+    app = DeepFakeBot(command_prefix='d!')
     app.add_cog(ConnectionManager(app))
     app.add_cog(CoreCommands(app))
     app.add_cog(FilterCommands(app))
@@ -32,7 +33,7 @@ def run_app():
     async def on_message(message):
         await app.process_commands(message)
 
-    token = os.environ.get('DEEPFAKE_DISCORD_TOKEN')
+    token = cogs.config.bot_token
     try:
         app.run(token)
     except RuntimeError as e:

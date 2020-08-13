@@ -16,8 +16,7 @@ class DeployCommands(commands.Cog):
         self.bot = bot
         self.parent_cog = self.bot.get_cog('CoreCommands')
         self.session = self.parent_cog.session
-        self.s3 = s3fs.S3FileSystem(key=cogs.config.aws_access_key_id,
-                                    secret=cogs.config.aws_secret_access_key)
+        self.s3 = s3fs.S3FileSystem()
 
     async def cog_check(self, ctx):
         connection_ok = await self.parent_cog.cog_check(ctx)

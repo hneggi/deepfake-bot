@@ -13,11 +13,17 @@ Make copies of your friends! Using the magic of cloud computing, [Markov](https:
 
 This is meant to be a rough outline of the steps and AWS resources needed to get this project up and running. It is not a precise how-to as I'm probably forgetting one or more steps. If you're a normal user ready deploy your bot, skip this section and see [here](https://deepfake-bot.readthedocs.io/en/latest/self-deployments.html) instead.
 
+### Prerequisites
+
+* A [Discord](https://discord.com/developers/) account - Create an application and add a bot to it.
+* An [AWS](https://aws.amazon.com/) account - Be sure to install and [configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) the CLI so your development machine can access the resources it needs
+* A Python 3.6 environment - E.g. `conda create -n deepfake_bot python=3.6` 
+* Docker - Needed to build and push the container 
+* Git - That's kind of a given...
+
 ### VPC
 
-* Setup a VPC with public and private subnets.
-* Setup a route table to allow traffic in the public subnets to an internet gateway.
-* In the private subnet, allow only traffic to and from the public subnet.
+Setup a VPC with public and private subnets similar to this [scenario](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario3.html). Bot application containers will be deployed in public subnets. Lambda functions and the RDS instance will run in private subnets.
 
 ### Database
 
@@ -32,21 +38,12 @@ This is meant to be a rough outline of the steps and AWS resources needed to get
 
 ### S3
 
-* Create a private bucket with a policy where objects expire every 24 hours. Change the name in [config.py](./cogs/config.py).
+* Create a private bucket with a policy where objects expire every 30 days. Change the name in [config.py](./cogs/config.py).
 * Create another bucket with no expiration policy. Change the `my_bucket` variable in [build_layer.sh](./lambdas/build_layer.sh).
-* Create an IAM user with full permissions to these. Save the credentials to the `DEEPFAKE_AWS_ACCESS_KEY_ID` and `DEEPFAKE_SECRET_ACCESS_KEY` environment variables.
 
-### Elastic Beanstalk
+### Elastic Container Service
 
-* Provision a Docker worker environment in your public subnet.
-* Add the needed EC2 security groups so it can reach the database.
-* Create an IAM instance profile.
-* Head over to https://discordapp.com/developers and create an app for your bot. Grab its token. While you're at it, create another app for testing.
-* Add the following environment variables:
-    * `DEEPFAKE_AWS_ACCESS_KEY_ID`
-    * `DEEPFAKE_DISCORD_TOKEN`
-    * `DEEPFAKE_SECRET_ACCESS_KEY`
-    * `DEEPFAKE_DATABASE_STRING` - this should look like so: ```mysql://[master user]:[master pw]@[RDS endpoint url]:3306/[production schema name]?charset=utf8```
+* TODO...
 
 ### Lambda Functions
 
@@ -64,4 +61,4 @@ This is meant to be a rough outline of the steps and AWS resources needed to get
 ### Release
 
 * Run [release.sh](release.sh)
-* Grab [deploy.zip](deploy.zip) and 'Upload and Deploy' it to EBS.
+* TODO...
