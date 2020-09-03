@@ -1,6 +1,6 @@
 import unittest
 import cogs.config
-from cogs.db_schema import *
+from database.db_schema import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 

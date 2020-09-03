@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs import db_queries
+from database import db_queries
 import cogs.config
 import s3fs
 from cryptography.fernet import Fernet

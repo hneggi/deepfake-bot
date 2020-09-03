@@ -7,7 +7,7 @@ import random
 import glob
 from cogs import config
 from cogs import extract_task
-from cogs import db_queries
+from database import db_queries
 from cogs.db_connection import DeepFakeBotConnectionError
 from cogs.config import *
 
@@ -162,7 +162,7 @@ class CoreCommands(commands.Cog):
                 self.s3_client.download_file(config.aws_s3_bucket_prefix, sample_response_file,
                                              f'./tmp/{sample_response_file}')
                 self.bot.loop.create_task(
-                    self.delete_after_5_min(sample_response_file)
+                    self.delete_after_5_min(f'./tmp/{sample_response_file}')
                 )
 
             # Pick a random response

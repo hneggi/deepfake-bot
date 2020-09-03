@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs import db_queries
+from database import db_queries
 from cogs import config
 from cogs import lambda_commands
 import logging

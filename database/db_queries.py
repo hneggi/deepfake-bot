@@ -1,6 +1,6 @@
 import datetime as dt
 import discord
-from cogs.db_schema import *
+from database.db_schema import *
 from cogs.config import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session

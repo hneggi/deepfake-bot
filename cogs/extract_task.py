@@ -1,7 +1,7 @@
 import uuid
 import gzip
 import datetime as dt
-from cogs import db_queries
+from database import db_queries
 import discord
 import logging
 import asyncio

@@ -8,7 +8,9 @@ from cogs.filter_commands import FilterCommands
 from cogs.plot_commands import PlotCommands
 from cogs.model_commands import ModelCommands
 from cogs.deploy_commands import DeployCommands
+from cogs.deployment.deployment_runner import run_hosted_bots
 import cogs.config
+import argparse
 
 logger = logging.getLogger(__name__)
 
@@ -46,4 +48,10 @@ if __name__ == '__main__':
         format='%(asctime)s %(levelname)-8s %(message)s',
         level=logging.INFO,
         datefmt='%Y-%m-%d %H:%M:%S')
-    run_app()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hosted', action='store_true', default=False, dest='hosted')
+    if parser.parse_args().hosted:
+        run_hosted_bots()
+    else:
+        run_app()
